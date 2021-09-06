@@ -1,0 +1,78 @@
+﻿@page "/all"
+@using BlazorWebAssembly.Shared
+
+<div style="width:1100px">
+    <SfGrid @ref="employeeGrid" DataSource="@Employees" AllowPaging="true" AllowFiltering="true">
+        @*<GridGroupSettings ShowGroupedColumn="true" ShowUngroupButton="false" ShowToggleButton="true">
+                <CaptionTemplate>
+                     @{
+                         var employee = (context as CaptionTemplateContext);
+                         <div>@employee.Field : @employee.Key - @employee.Count Employees</div>
+                     }
+                </CaptionTemplate>
+            </GridGroupSettings>*@
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Employee.EmployeeId) HeaderText="ID"
+                        FilterSettings="@(new FilterSettings() { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox} )">
+                <FilterItemTemplate>
+                    @{
+                        var filterContext = (context as FilterItemTemplateContext);
+                        var filterValue = filterContext.Value;
+                        if (Convert.ToInt32(filterValue) <= 9)
+                        {
+                            filterValue = "0" + filterValue;
+                        }
+                        @filterValue
+                    }
+                </FilterItemTemplate>
+            </GridColumn>
+            <GridColumn Field=@nameof(Employee.FirstName) HeaderText="First Name"></GridColumn>
+            <GridColumn Field=@nameof(Employee.LastName) HeaderText="Last Name"
+                         FilterSettings="@(new FilterSettings() { Type = Syncfusion.Blazor.Grids.FilterType.Excel} )">
+
+            </GridColumn>
+            <GridColumn Format="d" Field=@nameof(Employee.DateOfBirth) HeaderText="Date of Birth"></GridColumn>
+            <GridColumn Field=@nameof(Employee.Email) HeaderText="Email" AllowFiltering="false"></GridColumn>
+            <GridColumn Field=@nameof(Employee.Gender) HeaderText="Gender">
+                <FilterTemplate>
+                    <SfDropDownList Placeholder="All" DataSource="@genderDropDown" TItem="DropDownListItems" TValue="string">
+                        <DropDownListFieldSettings Value="Value" Text="Text"></DropDownListFieldSettings>
+                        <DropDownListEvents TItem="DropDownListItems" TValue="string"
+                                            ValueChange="@GenderSelectionChange"></DropDownListEvents>
+                    </SfDropDownList>
+                </FilterTemplate>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+@code{
+
+    public List<Employee> Employees { get; set; }
+    public SfGrid<Employee> employeeGrid { get; set; }
+
+    [Inject]
+    public IEmployeeService EmployeeService { get; set; }
+
+    List<DropDownListItems> genderDropDown = EnumHelper.ConvertEnumtoDropDownSource<Gender>("All", "All");
+
+    protected void GenderSelectionChange(ChangeEventArgs<string, DropDownListItems> args)
+    {
+        if (args.Value == "All")
+        {
+            employeeGrid.ClearFiltering("Gender");
+        }
+        else
+        {
+            employeeGrid.FilterByColumn("Gender", "equal", args.Value);
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Employees = (await EmployeeService.GetAllEmployees()).ToList();
+    }
+
+}

@@ -1,0 +1,56 @@
+﻿@page "/"
+@using BlazorWebAssembly.Shared
+@using Syncfusion.Blazor.Grids
+
+
+@*<SfSpinner @bind-Visible="SpinnerVisible" Label="Loading data..." Type="SpinnerType.Material">
+
+</SfSpinner>*@
+
+@*@if (Employees != null)
+{*@
+    <SfGrid TValue="Employee" AllowPaging="true" AllowSorting="true">
+        <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(EmployeeAdapter)">
+
+        </SfDataManager>
+        @*<GridSortSettings AllowUnsort="false">
+            <GridSortColumns>
+                <GridSortColumn Field="EmployeeId" Direction="SortDirection.Descending"></GridSortColumn>
+            </GridSortColumns>
+        </GridSortSettings>*@
+        <GridPageSettings PageSize="5" PageCount="3" PageSizes="@PageDDL"></GridPageSettings>
+        <GridSortSettings AllowUnsort="false">
+            <GridSortColumns>
+                <GridSortColumn Field="EmployeeId"></GridSortColumn>
+            </GridSortColumns>
+        </GridSortSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Employee.EmployeeId) HeaderText="ID"></GridColumn>
+            <GridColumn Field=@nameof(Employee.FirstName) HeaderText="First Name"></GridColumn>
+            <GridColumn Field=@nameof(Employee.LastName) HeaderText="Last Name"></GridColumn>
+            <GridColumn Field=@nameof(Employee.Email) HeaderText="Email"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+@*}*@
+
+@code{
+
+    public string[] PageDDL { get; set; } = new string[] { "All", "5", "10", "15", "20", "25" };
+
+    //public List<Employee> Employees { get; set; }
+
+    //[Inject]
+    //public IEmployeeService EmployeeService { get; set; }
+
+    //public Boolean SpinnerVisible { get; set; }
+
+    //protected async override Task OnInitializedAsync()
+    //{
+    //    SpinnerVisible = true;
+    //    // await Task.Delay(3000);
+    //    Employees = (await EmployeeService.GetEmployees()).ToList();
+    //    SpinnerVisible = false;
+    //}
+
+
+}
